@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLORZ SCRIPTR</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* تصميم نصف الدائرة بتدرجات الأزرق */
+        .half-circle {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, #00f, #00008b);
+            border-bottom-left-radius: 100% 50%;
+            border-top-left-radius: 100% 50%;
+            z-index: -1;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .container {
+            text-align: center;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 4rem;
+            background: linear-gradient(90deg, #00f, #00ffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            color: white;
+            background: linear-gradient(90deg, #00f, #00ffff);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin: 5px;
+            width: 200px;
+        }
+
+        button:hover {
+            background: linear-gradient(90deg, #00ffff, #00f);
+        }
+
+        .buttons-container {
+            display: grid;
+            grid-template-columns: repeat(5, auto);
+            gap: 10px;
+            justify-content: center;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            text-align: center;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #333;
+            color: white;
+        }
+
+        .password-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .password-container input {
+            margin-bottom: 15px;
+        }
+
+        .password-container button {
+            width: 100%;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- نصف الدائرة -->
+    <div class="half-circle"></div>
+
+    <div class="container">
+        <h1>FLORZ SCRIPTR</h1>
+        <p>عدد الزوار: <span id="visitorCount">0</span></p>
+        <div class="buttons-container" id="buttonsContainer"></div>
+    </div>
+
+    <!-- شاشة كلمة المرور -->
+    <div class="password-container" id="passwordContainer">
+        <input type="password" id="passwordInput" placeholder="أدخل كلمة المرور">
+        <button onclick="checkPassword()">دخول</button>
+    </div>
+
+    <script>
+        // كلمة المرور
+        const correctPassword = "admin123";  // يجب عليك تغيير هذه الكلمة
+
+        // تخزين عدد الزوار باستخدام localStorage
+        let visitorCount = localStorage.getItem('visitorCount');
+
+        // التحقق مما إذا كان المستخدم قد زار الموقع من قبل
+        if (!visitorCount) {
+            visitorCount = 0;
+        } else {
+            visitorCount = parseInt(visitorCount);
+        }
+
+        // زيادة عدد الزوار فقط إذا لم يكن المستخدم قد زار الموقع من نفس الجهاز
+        const visitedBefore = localStorage.getItem('visited');
+        if (!visitedBefore) {
+            visitorCount++;
+            localStorage.setItem('visitorCount', visitorCount);
+            localStorage.setItem('visited', true);
+        }
+
+        // عرض عدد الزوار
+        document.getElementById('visitorCount').textContent = visitorCount;
+
+        // إذا كان الزائر هو الأول أو الثاني
+        const isDeveloper = visitorCount <= 2;
+
+        // عرض نافذة كلمة المرور فقط إذا كان الزائر هو الأول أو الثاني
+        window.onload = () => {
+            const passwordContainer = document.getElementById('passwordContainer');
+            if (isDeveloper) {
+                passwordContainer.style.display = "flex";
+            } else {
+                createButtons();  // إنشاء الأزرار مباشرة إذا كان الزائر ليس مطورًا
+            }
+        };
+
+        // التحقق من كلمة المرور
+        function checkPassword() {
+            const passwordInput = document.getElementById('passwordInput').value;
+
+            if (passwordInput === correctPassword) {
+                // إخفاء نافذة كلمة المرور وعرض الأزرار
+                document.getElementById('passwordContainer').style.display = "none";
+                createButtons();  // إنشاء الأزرار بعد التحقق
+            } else {
+                alert("كلمة المرور خاطئة!");
+            }
+        }
+
+        // إنشاء الأزرار فقط بعد التحقق من كلمة المرور أو إذا كان الزائر مطورًا
+        function createButtons() {
+            const buttonsContainer = document.getElementById('buttonsContainer');
+            for (let i = 1; i <= 10; i++) {
+                const buttonContainer = document.createElement('div');
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.placeholder = `اكتب هنا الزر ${i}`;
+                const button = document.createElement('button');
+                button.textContent = `زر ${i}`;
+
+                // إذا كان الزائر ليس مطورًا، لا يمكنه تعديل الأزرار
+                if (!isDeveloper) {
+                    input.disabled = true;  // تعطيل الحقل النصي
+                    button.disabled = true; // تعطيل الزر
+                }
+
+                // عند الضغط على الزر، يتم نسخ النص من الحقل
+                button.onclick = () => {
+                    const textToCopy = input.value;
+                    if (textToCopy) {
+                        navigator.clipboard.writeText(textToCopy).then(() => {
+                            alert(`تم نسخ النص '${textToCopy}' إلى الحافظة!`);
+                        }).catch(err => {
+                            console.error("فشل في نسخ النص: ", err);
+                        });
+                    } else {
+                        alert("من فضلك أدخل نصًا في الزر أولاً!");
+                    }
+                };
+
+                // إضافة الحقل النصي والزر إلى الحاوية الخاصة بهما
+                buttonContainer.appendChild(input);
+                buttonContainer.appendChild(button);
+
+                // إضافة الحاوية إلى واجهة المستخدم
+                buttonsContainer.appendChild(buttonContainer);
+            }
+        }
+
+    </script>
+
+</body>
+</html>
