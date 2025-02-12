@@ -82,6 +82,7 @@
             grid-template-columns: repeat(5, auto);
             gap: 10px;
             justify-content: center;
+            margin-top: 20px;
         }
 
         input[type="text"] {
@@ -227,6 +228,17 @@
             }
         }
 
+        // إضافة اختصار لوحة المفاتيح لفتح/إغلاق القائمة
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'd') {
+                const passwordContainer = document.getElementById('passwordContainer');
+                if (passwordContainer.style.display === 'none' || passwordContainer.style.display === '') {
+                    passwordContainer.style.display = 'flex';  // إظهار القائمة
+                } else {
+                    passwordContainer.style.display = 'none';  // إخفاء القائمة
+                }
+            }
+        });
     </script>
 
 </body>
